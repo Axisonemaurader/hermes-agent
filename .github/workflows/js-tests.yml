@@ -88,3 +88,8 @@ jobs:
       # nothing.
       - name: Run all workspace checks
         run: node .github/scripts/run-workspace-checks.mjs
+      - name: Check the checkout is clean
+        # Last step of every job (tests/ci/test_clean_worktree_check.py): a test or CI step that
+        # leaves an untracked or modified file in the checkout is reported here.
+        if: always() && !cancelled()
+        uses: ./.github/actions/check-clean-worktree
