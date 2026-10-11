@@ -45,8 +45,10 @@ def test_every_checkout_job_ends_with_the_clean_worktree_step():
         if last.get("uses") != USES:
             problems.append(f"{label}: last step is {last.get('name') or last.get('uses')!r}")
             continue
-        if str(last.get("if", "")).replace(" ", "") != "always()&&!cancelled()":
-            problems.append(f"{label}: needs `if: always() && !cancelled()`, has {last.get('if')!r}")
+        if "if" in last:
+            # Default success(): after a failed step the job is red already, and that step may
+            # have left temp files its own later cleanup would remove (false positives).
+            problems.append(f"{label}: runs with `if: {last['if']}`; leave `if:` off")
         if "mode" in (last.get("with") or {}):
             problems.append(f"{label}: passes `mode`; the action's default is the only switch")
         checkout = next(s for s in steps if str(s.get("uses", "")).startswith("actions/checkout@"))

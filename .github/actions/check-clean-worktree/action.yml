@@ -4,10 +4,11 @@ description: >-
   files in the checkout. Tests and CI steps must write under their own temp
   dirs (pytest's tmp_path, the HERMES_HOME fixture, $RUNNER_TEMP), not into the
   repo: stray files from test runs have reached main more than once. Run it as
-  the last step of a job, after the checkout exists:
+  the last step of a job, after the checkout exists, with no `if:` (the default
+  success() keeps it off jobs where an earlier step failed and may have left its
+  own temp files):
 
     - name: Check the checkout is clean
-      if: always() && !cancelled()
       uses: ./.github/actions/check-clean-worktree
 
 inputs:
